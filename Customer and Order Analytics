@@ -1,13 +1,13 @@
 # I queried multiple tables for a customer and order data in a database and below are specific statistics and answers arrived at.
 
 #1 How many orders were placed in January?
-SELECT count (*) orderID 
+SELECT count (orderid) 
 FROM BIT_DB.jansales
-WHERE length(orderID) = 6
+WHERE length(orderid) = 6
 AND orderid <> 'Order ID'; 
 
 #2 How many of those orders were for an iPhone?
-SELECT Count(orderID) FROM BIT_DB.jansales
+SELECT Count(orderid) FROM BIT_DB.jansales
 WHERE Product = 'iPhone'
 AND length(orderID) = 6
 AND orderID <> 'Order ID';
