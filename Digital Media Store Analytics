@@ -1,0 +1,75 @@
+# I downloaded the Digital Media Store Data using this link https://cdn.fs.teachablecdn.com/dRmwOLQsS22FVFbXfh3x.
+# It includes  includes tables for artists, albums, media tracks, invoices, and customers.
+# I was able to query the table and answer specific questions.
+
+
+#1 Show Customers (their full names, customer ID, and country) who are not in the US. 
+SELECT CustomerId, FirstName || " " || LastName AS "Customer", Country 
+FROM customers
+WHERE Country <> 'USA';
+
+#2 Show only the Customers from Brazil.
+SELECT CustomerId, FirstName || " " || LastName AS "Customers", Country 
+FROM customers
+WHERE Country = 'Brazil';
+
+#3 The Invoices of customers who are from Brazil.
+SELECT FirstName || " " || LastName AS "Customers", InvoiceId, InvoiceDate, BillingCountry
+FROM customers c
+JOIN invoices i
+ON c.CustomerId = i.CustomerId
+WHERE Country = 'Brazil';
+
+#4 Employees who are Sales Agents.
+SELECT FirstName || " " || LastName AS "Sales Rep", Title 
+FROM employees
+WHERE Title = 'Sales Support Agent';
+
+#5 Unique/distinct list of billing countries from the Invoice table.
+SELECT distinct BillingCountry 
+FROM invoices
+ORDER BY BillingCountry;
+
+#6 Query that shows the invoices associated with each sales agent.
+SELECT InvoiceId, FirstName || " " || LastName AS "Sales Rep", Title, InvoiceDate
+FROM employees 
+JOIN invoices 
+ON employees.EmployeeId = invoices.InvoiceId
+WHERE Title = 'Sales Support Agent';
+
+#7 The Invoice Total, Customer name, Country, and Sales Agent name for all invoices and customers.
+SELECT e.FirstName || " " || e.LastName AS "Sales Agent", c.FirstName || " " || c.LastName AS "Customer", c.country, i.Total
+FROM employees e, customers c, invoices i
+WHERE e.EmployeeId == c.SupportRepId 
+AND c.SupportRepId == i.CustomerId;
+
+#8 How many Invoices were there in 2009?
+SELECT COUNT(InvoiceId) FROM invoices
+WHERE InvoiceDate LIKE '2009%';
+
+#9 What are the total sales for 2009?
+SELECT SUM(Total) AS "2009 Sales"
+FROM invoices
+WHERE InvoiceDate LIKE '2009%';
+
+#10 Query that includes the purchased track name with each invoice line ID.
+SELECT Name, InvoiceLineId FROM tracks
+JOIN invoice_items
+ON tracks.TrackId = invoice_items.TrackId;
+
+#11 Total sales made by each sales agent.
+SELECT e.FirstName || " " || e.LastName AS "Sales Rep", SUM(i.Total) AS "Total Sales"
+FROM customers c, employees e, invoices i
+WHERE c.SupportRepId  == e.EmployeeId
+AND c.CustomerId == i.CustomerId
+GROUP BY "Sales Rep";
+
+#12 Which sales agent made the most sales in 2009?
+SELECT e.FirstName || " " || e.LastName AS "Sales Rep", SUM(i.Total) AS "Total Sales"
+FROM customers c, employees e, invoices i
+WHERE InvoiceDate LIKE "2009%"
+AND c.SupportRepId  == e.EmployeeId
+AND c.CustomerId == i.CustomerId
+GROUP BY "Sales Rep"
+ORDER BY "Sales Rep" DESC
+LIMIT 1;
